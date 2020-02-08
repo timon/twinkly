@@ -1,0 +1,8 @@
+{
+  "domain": "twinkly",
+  "name": "Twinkly Xmas tree lights",
+  "documentation": "https://xled.readthedocs.io/",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": ["xled==0.6.1"]
+}
