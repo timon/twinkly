@@ -17,17 +17,27 @@ import homeassistant.helpers.config_validation as cv
 _LOGGER = logging.getLogger(__name__)
 
 # Validation of the user's configuration
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({vol.Required(CONF_HOST): cv.string})
+PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({vol.Optional(CONF_HOST): cv.string})
 
 TWINKLY_SUPPORT_FLAGS = SUPPORT_BRIGHTNESS
 
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the Twinkly Light platform."""
-    host = config[CONF_HOST]
 
-    # Add devices
-    add_entities([TwinklyLight(host)])
+    if CONF_HOST in config:
+        host = config[CONF_HOST]
+    else:
+        _LOGGER.debug("Discovering twinkly")
+        dev = xled.discover.discover()
+        if dev is not None:
+            host = dev.ip_address
+            _LOGGER.info("Discovered twinkly id %s at %s", dev.id, host)
+        else:
+            _LOGGER.info("Autodiscovery for twinkly failed")
+    if host is not None:
+        # Add devices
+        add_entities([TwinklyLight(host)])
 
 
 class TwinklyLight(Light):
